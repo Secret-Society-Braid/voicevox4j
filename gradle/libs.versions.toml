@@ -1,0 +1,14 @@
+[versions]
+
+[libraries]
+logback = { module = "ch.qos.logback:logback-classic", version = "1.5.16" }
+lombok = { module = "org.projectlombok:lombok", version = "1.18.28" }
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "2.1.0" }
+jna = { module = "net.java.dev.jna:jna", version = "5.13.0" }
+
+[bundles]
+bundled = [ "logback", "lombok", "jakarta-annotation", "jna" ]
+annotations = [ "jakarta-annotation", "lombok" ]
+
+[plugins]
+moduleplugin = { id = "org.javamodularity.moduleplugin", version = "1.8.15" }
