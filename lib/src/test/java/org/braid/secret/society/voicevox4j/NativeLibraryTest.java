@@ -11,7 +11,6 @@ import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxVoiceModelFi
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("local test only, requires native library")
 public class NativeLibraryTest {
 
   private static final Core core = NativeVoicevoxLibrary.load(Path.of(""));

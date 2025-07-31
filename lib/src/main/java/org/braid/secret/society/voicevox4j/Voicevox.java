@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
 import org.braid.secret.society.voicevox4j.api.Synthesizer;
+import org.braid.secret.society.voicevox4j.api.UserDict;
 import org.braid.secret.society.voicevox4j.api.VoiceModelFile;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
 import org.braid.secret.society.voicevox4j.internal.Core;
@@ -92,5 +93,16 @@ public class Voicevox {
 
     // Synthesizerを作成
     return new Synthesizer(onnxruntime, openJtalkDictionary, options, core);
+  }
+
+  /**
+   * 新しいユーザー辞書を作成します。
+   * この操作では空のユーザー辞書が作成され、単語の追加や辞書ファイルの読み込みが可能になります。
+   *
+   * @return 初期化されたユーザー辞書
+   */
+  public UserDict createUserDict() {
+    log.debug("Creating new user dictionary");
+    return new UserDict(core);
   }
 }
