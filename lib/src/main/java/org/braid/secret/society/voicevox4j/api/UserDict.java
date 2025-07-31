@@ -31,11 +31,8 @@ public class UserDict implements Closeable, AutoCloseable {
   public UserDict(Core core) {
     this.core = core;
     try {
-      VoicevoxUserDict dict = core.voicevox_user_dict_new();
-      if (dict == null || dict.equals(Pointer.NULL)) {
-        throw new IllegalStateException("Failed to create user dictionary: voicevox_user_dict_new() returned null");
-      }
-      this.nativeUserDict = dict;
+      Pointer pointer = core.voicevox_user_dict_new();
+      this.nativeUserDict = new VoicevoxUserDict(Pointer.nativeValue(pointer));
     } catch (Exception e) {
       throw new IllegalStateException("Failed to create user dictionary: " + e.getMessage(), e);
     }

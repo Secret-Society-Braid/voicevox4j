@@ -15,13 +15,6 @@ import org.junit.jupiter.api.Test;
  * UserDictとOpenJTalkDictionaryの統合テストクラス。
  * ユーザー辞書をOpenJTalk辞書に渡して実際のテキスト解析を行うテストを実装します。
  *
- * <h2>現在の状況</h2>
- * <p>
- * UserDict機能は完全に実装済みですが、VOICEVOX Coreライブラリのユーザー辞書機能で
- * Rustパニックエラーが発生しています。ライブラリの問題が解決されるまで、
- * 実際の実行は制限されています。
- * </p>
- *
  * <h2>実装済み機能</h2>
  * <ul>
  *   <li>UserDict CRUD操作（追加、更新、削除）</li>
@@ -32,13 +25,7 @@ import org.junit.jupiter.api.Test;
  *   <li>適切なリソース管理とメモリリーク防止</li>
  * </ul>
  *
- * <h2>テスト実行について</h2>
- * <p>
- * 現在のテストは、VOICEVOX Coreライブラリの問題により実行時エラーが発生しますが、
- * 実装自体は正しく、ライブラリの問題が解決されれば正常に動作します。
- * </p>
  */
-@Disabled("UserDict functionality causes Rust panic in VOICEVOX Core library. Implementation completed but tests disabled until library issue is resolved.")
 public class UserDictOpenJTalkIntegrationTest {
 
   @Test
@@ -281,14 +268,14 @@ public class UserDictOpenJTalkIntegrationTest {
     try (OpenJTalkDictionary openJtalkDict = voicevox.initOpenJTalkDictionary(dictPath)) {
       System.out.println("✓ OpenJTalk辞書初期化成功");
 
-      // まず英語テキストで基本動作を確認
-      System.out.println("\n--- 英語テキストでの基本動作確認 ---");
+      // まず日本語テキストで基本動作を確認
+      System.out.println("\n--- 日本語テキストでの基本動作確認 ---");
       try {
-        String englishText = "hello world";
-        String englishResult = openJtalkDict.analyze(englishText);
-        System.out.println("✓ 英語テキスト解析成功: " + englishResult.length() + " 文字");
+        String japaneseText = "こんにちは世界";
+        String japaneseResult = openJtalkDict.analyze(japaneseText);
+        System.out.println("✓ 日本語テキスト解析成功: " + japaneseResult.length() + " 文字");
       } catch (Exception e) {
-        System.out.println("⚠️ 英語テキスト解析エラー: " + e.getMessage());
+        System.out.println("⚠️ 日本語テキスト解析エラー: " + e.getMessage());
       }
 
       // ユーザー辞書を作成して統合テスト
@@ -297,7 +284,7 @@ public class UserDictOpenJTalkIntegrationTest {
         System.out.println("✓ ユーザー辞書作成成功");
 
         // ユーザー辞書の基本機能を確認
-        UUID wordId = userDict.addWord("test", "test", 0);
+        UUID wordId = userDict.addWord("テスト", "テスト", 0);
         Truth.assertThat(wordId).isNotNull();
         System.out.println("✓ ユーザー辞書に単語追加成功: " + wordId);
 
@@ -305,7 +292,7 @@ public class UserDictOpenJTalkIntegrationTest {
         String userDictJson = userDict.toJson();
         Truth.assertThat(userDictJson).isNotNull();
         Truth.assertThat(userDictJson).isNotEmpty();
-        Truth.assertThat(userDictJson).contains("test");
+        Truth.assertThat(userDictJson).contains("テスト");
         System.out.println("✓ ユーザー辞書JSON出力成功: " + userDictJson.length() + " 文字");
 
         // OpenJTalk辞書にユーザー辞書を設定
@@ -313,13 +300,13 @@ public class UserDictOpenJTalkIntegrationTest {
         System.out.println("✓ ユーザー辞書をOpenJTalk辞書に設定成功");
 
         // 単語の更新テスト
-        userDict.updateWord(wordId, "updated", "updated", 1);
+        userDict.updateWord(wordId, "更新済み", "コウシンズミ", 1);
         System.out.println("✓ ユーザー辞書単語更新成功");
 
         // 更新後のJSON確認
         String updatedJson = userDict.toJson();
-        Truth.assertThat(updatedJson).contains("updated");
-        Truth.assertThat(updatedJson).doesNotContain("test");
+        Truth.assertThat(updatedJson).contains("更新済み");
+        Truth.assertThat(updatedJson).doesNotContain("テスト");
         System.out.println("✓ 更新後JSON確認成功");
 
         // 単語削除テスト
@@ -328,7 +315,7 @@ public class UserDictOpenJTalkIntegrationTest {
 
         // 削除後のJSON確認
         String finalJson = userDict.toJson();
-        Truth.assertThat(finalJson).doesNotContain("updated");
+        Truth.assertThat(finalJson).doesNotContain("更新済み");
         System.out.println("✓ 削除後JSON確認成功");
       }
     }
@@ -359,8 +346,8 @@ public class UserDictOpenJTalkIntegrationTest {
         System.out.println("✓ 辞書作成成功（反復 " + (i + 1) + "）");
 
         // 各ユーザー辞書に異なる単語を追加
-        UUID word1 = userDict1.addWord("word1_" + i, "word1", 0);
-        UUID word2 = userDict2.addWord("word2_" + i, "word2", 1);
+        UUID word1 = userDict1.addWord("単語1_" + i, "タンゴ1", 0);
+        UUID word2 = userDict2.addWord("単語2_" + i, "タンゴ2", 1);
 
         Truth.assertThat(word1).isNotNull();
         Truth.assertThat(word2).isNotNull();
@@ -370,15 +357,15 @@ public class UserDictOpenJTalkIntegrationTest {
         String json1 = userDict1.toJson();
         String json2 = userDict2.toJson();
 
-        Truth.assertThat(json1).contains("word1_" + i);
-        Truth.assertThat(json2).contains("word2_" + i);
+        Truth.assertThat(json1).contains("単語1_" + i);
+        Truth.assertThat(json2).contains("単語2_" + i);
         System.out.println("✓ JSON出力確認成功");
 
         // 辞書間でのインポートテスト
         userDict1.importFrom(userDict2);
         String mergedJson = userDict1.toJson();
-        Truth.assertThat(mergedJson).contains("word1_" + i);
-        Truth.assertThat(mergedJson).contains("word2_" + i);
+        Truth.assertThat(mergedJson).contains("単語1_" + i);
+        Truth.assertThat(mergedJson).contains("単語2_" + i);
         System.out.println("✓ 辞書インポート成功");
 
         // OpenJTalk辞書への設定

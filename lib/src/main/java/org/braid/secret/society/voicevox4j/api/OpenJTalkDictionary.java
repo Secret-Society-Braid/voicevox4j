@@ -58,6 +58,10 @@ public class OpenJTalkDictionary implements Closeable, AutoCloseable {
     }
   }
 
+  public void useUserDict(UserDict userDict) throws VoicevoxException {
+    useUserDict(userDict.getNativeUserDict());
+  }
+
   /**
    * テキストを解析してアクセント句のJSONを作成します。
    *
@@ -68,20 +72,34 @@ public class OpenJTalkDictionary implements Closeable, AutoCloseable {
    */
   public String analyze(String text) throws VoicevoxException {
     ensureNotClosed();
-    PointerByReference outputAccentPhrasesJson = new PointerByReference();
-    int result = core.voicevox_open_jtalk_rc_analyze(nativeOpenJtalk, text, outputAccentPhrasesJson);
 
-    if (result != VoicevoxResultCode.VOICEVOX_RESULT_OK) {
-      String errorMessage = core.voicevox_error_result_to_message(result);
-      throw new VoicevoxException("Failed to analyze text: " + errorMessage, result);
-    }
+    // JNAでUTF-8エンコーディングを強制
+    String originalEncoding = System.getProperty("jna.encoding");
+    System.setProperty("jna.encoding", "UTF-8");
 
-    Pointer jsonPointer = outputAccentPhrasesJson.getValue();
     try {
-      return jsonPointer.getString(0, "UTF-8");
+      PointerByReference outputAccentPhrasesJson = new PointerByReference();
+      int result = core.voicevox_open_jtalk_rc_analyze(nativeOpenJtalk, text, outputAccentPhrasesJson);
+
+      if (result != VoicevoxResultCode.VOICEVOX_RESULT_OK) {
+        String errorMessage = core.voicevox_error_result_to_message(result);
+        throw new VoicevoxException("Failed to analyze text: " + errorMessage, result);
+      }
+
+      Pointer jsonPointer = outputAccentPhrasesJson.getValue();
+      try {
+        return jsonPointer.getString(0, "UTF-8");
+      } finally {
+        // JSONメモリは即座に解放
+        core.voicevox_json_free(jsonPointer);
+      }
     } finally {
-      // JSONメモリは即座に解放
-      core.voicevox_json_free(jsonPointer);
+      // 元のエンコーディング設定を復元
+      if (originalEncoding != null) {
+        System.setProperty("jna.encoding", originalEncoding);
+      } else {
+        System.clearProperty("jna.encoding");
+      }
     }
   }
 

@@ -6,6 +6,9 @@ module voicevox4j.lib.api {
   requires org.slf4j;
   opens org.braid.secret.society.voicevox4j.internal to com.sun.jna;
   opens org.braid.secret.society.voicevox4j.internal.structs to com.sun.jna;
+  opens org.braid.secret.society.voicevox4j.api to com.sun.jna;
+  uses com.sun.jna.Library;
+  uses com.sun.jna.Pointer;
   exports org.braid.secret.society.voicevox4j;
   exports org.braid.secret.society.voicevox4j.api;
   exports org.braid.secret.society.voicevox4j.exception;

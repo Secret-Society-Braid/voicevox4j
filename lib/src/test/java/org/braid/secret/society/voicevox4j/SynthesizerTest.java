@@ -10,7 +10,6 @@ import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
 import org.braid.secret.society.voicevox4j.api.Synthesizer;
 import org.braid.secret.society.voicevox4j.api.VoiceModelFile;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -47,7 +46,6 @@ import org.junit.jupiter.api.Test;
  *   <li>JSONとWAVデータのメモリは内部で自動解放されます</li>
  * </ul>
  */
-@Disabled("Synthesizer tests require model files and dictionary")
 public class SynthesizerTest {
 
   private static final int TEST_STYLE_ID = 0;

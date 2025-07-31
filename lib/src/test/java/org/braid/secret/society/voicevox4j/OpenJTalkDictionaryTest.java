@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
+import org.braid.secret.society.voicevox4j.api.UserDict;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
 import org.braid.secret.society.voicevox4j.internal.Core;
 import org.braid.secret.society.voicevox4j.internal.NativeVoicevoxLibrary;
@@ -25,20 +26,12 @@ import org.junit.jupiter.api.Test;
  *     System.out.println(accentJson);
  *
  *     // ユーザー辞書を使用する場合
- *     VoicevoxUserDict userDict = core.voicevox_user_dict_new();
- *     dict.useUserDict(userDict);
+ *     try (UserDict userDict = new UserDict(core)) {
+ *         dict.useUserDict(userDict.getNativeUserDict());
+ *     }
  * } // リソースは自動的に解放される
- * }</pre>
- *
- * <h2>リソース管理の重要性</h2>
- * <ul>
- *   <li>必ずtry-with-resources文を使用するか、明示的にclose()を呼び出してください</li>
- *   <li>クローズ後の操作は IllegalStateException を投げます</li>
- *   <li>複数回のclose()呼び出しは安全です</li>
- *   <li>メモリリークを防ぐため、analyzeメソッドで返されるJSONは内部でメモリが自動解放されます</li>
- * </ul>
+ * }
  */
-@Disabled("Dictionary file reading is not implemented yet")
 public class OpenJTalkDictionaryTest {
 
   @Test
@@ -136,24 +129,127 @@ public class OpenJTalkDictionaryTest {
   @Test
   void testOpenJTalkDictionaryWithUserDict() throws VoicevoxException, IOException {
     Path dictPath = Paths.get("src/main/resources/voicevox_core/dict/open_jtalk_dic_utf_8-1.11").toAbsolutePath();
-    Core core = NativeVoicevoxLibrary.load(Path.of(""));
+    Voicevox voicevox = new Voicevox(Path.of(""));
 
-    System.out.println("=== ユーザー辞書テスト開始 ===");
+    System.out.println("=== ユーザー辞書統合テスト開始 ===");
+    System.out.println("OpenJTalk辞書パス: " + dictPath);
+    System.out.println("辞書ディレクトリ存在確認: " + java.nio.file.Files.exists(dictPath));
 
-    try (OpenJTalkDictionary dictionary = new OpenJTalkDictionary(dictPath, core)) {
-      // ユーザー辞書の作成とテスト
-      // 注意: 実際のユーザー辞書機能をテストするには、VoicevoxUserDictの実装が必要
-      System.out.println("✓ OpenJTalkDictionary作成成功（ユーザー辞書テスト用）");
+    try (OpenJTalkDictionary dictionary = voicevox.initOpenJTalkDictionary(dictPath);
+         UserDict userDict = voicevox.createUserDict()) {
 
-      // 基本的な解析が動作することを確認
-      String result = dictionary.analyze("テスト用テキスト");
-      Truth.assertThat(result).isNotNull();
-      System.out.println("✓ 基本解析成功");
+      System.out.println("✓ OpenJTalkDictionary及びUserDict作成成功");
+      Truth.assertThat(dictionary.isClosed()).isFalse();
+      Truth.assertThat(userDict.isClosed()).isFalse();
 
-      System.out.println("注意: ユーザー辞書の実際のテストにはVoicevoxUserDictクラスが必要です");
+      // テスト用のテキスト
+      String testText = "ボイスボックスで音声合成を行います";
+
+      // ユーザー辞書なしでの解析（ベースライン）
+      System.out.println("\n--- ユーザー辞書なしでの解析 ---");
+      String withoutUserDict = dictionary.analyze(testText);
+      Truth.assertThat(withoutUserDict).isNotNull();
+      Truth.assertThat(withoutUserDict).isNotEmpty();
+      System.out.println("✓ ベースライン解析成功: " + withoutUserDict.length() + " 文字");
+      System.out.println("解析結果（先頭200文字）:");
+      System.out.println(withoutUserDict.length() > 200 ?
+        withoutUserDict.substring(0, 200) + "..." : withoutUserDict);
+
+      // ユーザー辞書にカスタム単語を追加
+      System.out.println("\n--- ユーザー辞書へのカスタム単語追加 ---");
+      java.util.UUID wordId1 = userDict.addWord("ボイスボックス", "ボイスボックス", 0);
+      java.util.UUID wordId2 = userDict.addWord("音声合成", "オンセイゴウセイ", 1);
+      java.util.UUID wordId3 = userDict.addWord("テキスト読み上げ", "テキストヨミアゲ", 0);
+
+      Truth.assertThat(wordId1).isNotNull();
+      Truth.assertThat(wordId2).isNotNull();
+      Truth.assertThat(wordId3).isNotNull();
+      Truth.assertThat(wordId1).isNotEqualTo(wordId2);
+      Truth.assertThat(wordId2).isNotEqualTo(wordId3);
+
+      System.out.println("✓ カスタム単語追加成功:");
+      System.out.println("  - ボイスボックス -> " + wordId1);
+      System.out.println("  - 音声合成 -> " + wordId2);
+      System.out.println("  - テキスト読み上げ -> " + wordId3);
+
+      // ユーザー辞書の内容をJSON形式で確認
+      System.out.println("\n--- ユーザー辞書内容確認 ---");
+      String userDictJson = userDict.toJson();
+      Truth.assertThat(userDictJson).isNotNull();
+      Truth.assertThat(userDictJson).isNotEmpty();
+      Truth.assertThat(userDictJson).contains("ボイスボックス");
+      Truth.assertThat(userDictJson).contains("音声合成");
+      Truth.assertThat(userDictJson).contains("テキスト読み上げ");
+
+      System.out.println("✓ ユーザー辞書JSON確認成功 (" + userDictJson.length() + " 文字)");
+      System.out.println("ユーザー辞書JSON（先頭300文字）:");
+      System.out.println(userDictJson.length() > 300 ?
+        userDictJson.substring(0, 300) + "..." : userDictJson);
+
+      // OpenJTalkDictionaryにユーザー辞書を設定
+      System.out.println("\n--- OpenJTalkDictionaryにユーザー辞書設定 ---");
+      dictionary.useUserDict(userDict.getNativeUserDict());
+      System.out.println("✓ ユーザー辞書設定成功");
+
+      // ユーザー辞書ありでの解析
+      System.out.println("\n--- ユーザー辞書ありでの解析 ---");
+      String withUserDict = dictionary.analyze(testText);
+      Truth.assertThat(withUserDict).isNotNull();
+      Truth.assertThat(withUserDict).isNotEmpty();
+      System.out.println("✓ ユーザー辞書統合解析成功: " + withUserDict.length() + " 文字");
+      System.out.println("解析結果（先頭200文字）:");
+      System.out.println(withUserDict.length() > 200 ?
+        withUserDict.substring(0, 200) + "..." : withUserDict);
+
+      // 解析結果の比較（完全に同じでないことを確認）
+      System.out.println("\n--- 解析結果比較 ---");
+      boolean resultsAreDifferent = !withoutUserDict.equals(withUserDict);
+      System.out.println("✓ ユーザー辞書の影響確認: " + (resultsAreDifferent ? "解析結果に差異あり" : "解析結果同一"));
+      System.out.println("  - ベースライン長: " + withoutUserDict.length());
+      System.out.println("  - ユーザー辞書適用後長: " + withUserDict.length());
+
+      // 複数のテキストでテスト
+      System.out.println("\n--- 複数テキストでの統合テスト ---");
+      String[] testTexts = {
+        "ボイスボックスでテキスト読み上げ",
+        "音声合成エンジンの使用方法",
+        "こんにちはボイスボックス"
+      };
+
+      for (String text : testTexts) {
+        String result = dictionary.analyze(text);
+        Truth.assertThat(result).isNotNull();
+        Truth.assertThat(result).isNotEmpty();
+        System.out.println("✓ '" + text + "' 解析成功 (" + result.length() + " 文字)");
+      }
+
+      // ユーザー辞書の更新テスト
+      System.out.println("\n--- ユーザー辞書更新テスト ---");
+      userDict.updateWord(wordId1, "VOICEVOX", "ボイスボックス", 2);
+      System.out.println("✓ 単語更新成功: " + wordId1);
+
+      // 更新後の解析
+      String updatedResult = dictionary.analyze("VOICEVOXで音声合成");
+      Truth.assertThat(updatedResult).isNotNull();
+      Truth.assertThat(updatedResult).isNotEmpty();
+      System.out.println("✓ 更新後解析成功: " + updatedResult.length() + " 文字");
+
+      // ユーザー辞書の削除テスト
+      System.out.println("\n--- ユーザー辞書単語削除テスト ---");
+      userDict.removeWord(wordId3);
+      System.out.println("✓ 単語削除成功: " + wordId3);
+
+      // 削除後のJSON確認
+      String updatedJson = userDict.toJson();
+      Truth.assertThat(updatedJson).doesNotContain("テキスト読み上げ");
+      System.out.println("✓ 削除後JSON確認成功");
+
+      // ネイティブオブジェクトの取得確認
+      Truth.assertThat(userDict.getNativeUserDict()).isNotNull();
+      System.out.println("✓ ネイティブUserDictオブジェクト取得成功");
     }
 
-    System.out.println("=== ユーザー辞書テスト完了 ===\n");
+    System.out.println("=== ユーザー辞書統合テスト完了 ===\n");
   }
 
   @Test

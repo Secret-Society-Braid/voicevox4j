@@ -86,7 +86,7 @@ public interface Core extends Library {
 
   // ユーザー辞書関連
   VoicevoxUserDictWord.ByValue voicevox_user_dict_word_make(String surface, String pronunciation, long accent_type);
-  VoicevoxUserDict voicevox_user_dict_new();
+  Pointer voicevox_user_dict_new();
   int voicevox_user_dict_load(VoicevoxUserDict user_dict, String dict_path);
   int voicevox_user_dict_add_word(VoicevoxUserDict user_dict, VoicevoxUserDictWord word, byte[] output_word_uuid); // `uint8_t (*)[16]` は byte[16]として扱う
   int voicevox_user_dict_update_word(VoicevoxUserDict user_dict, byte[] word_uuid, VoicevoxUserDictWord word); // `uint8_t (*)[16]` は byte[16]として扱う

@@ -1,6 +1,7 @@
 package org.braid.secret.society.voicevox4j.internal;
 
 import com.sun.jna.Native;
+import com.sun.jna.Library;
 import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +51,12 @@ public class NativeVoicevoxLibrary {
         throw new RuntimeException("Failed to load voicevox_core library. Ensure the library is available in the specified directory or as a resource.", e);
       }
     }
-    return Native.load(libraryPath, Core.class);
+
+    // UTF-8エンコーディングを強制するJNAオプションを設定
+    java.util.Map<String, Object> options = new java.util.HashMap<>();
+    options.put(Library.OPTION_STRING_ENCODING, "UTF-8");
+
+    return Native.load(libraryPath, Core.class, options);
   }
 
   private static String loadLibraryFromDirectory(@Nonnull Path directory) {

@@ -28,6 +28,22 @@ dependencies {
   annotationProcessor(libs.jakarta.annotation)
 }
 
+// force UTF-8 encoding both for source files and for the output
+tasks.withType<JavaCompile> {
+  options.encoding = "UTF-8"
+}
+
 tasks.test {
   useJUnitPlatform()
+
+//  // UTF-8エンコーディングを強制
+//  systemProperty("file.encoding", "UTF-8")
+//  systemProperty("jna.encoding", "UTF-8")
+//
+//  // JVMの文字エンコーディング設定
+//  jvmArgs(
+//    "-Dfile.encoding=UTF-8",
+//    "-Djna.encoding=UTF-8",
+//    "-Dsun.jnu.encoding=UTF-8"
+//  )
 }
