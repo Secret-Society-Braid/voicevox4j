@@ -1,13 +1,18 @@
 [versions]
 
 [libraries]
-logback = { module = "ch.qos.logback:logback-classic", version = "1.5.16" }
-lombok = { module = "org.projectlombok:lombok", version = "1.18.28" }
-jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "2.1.0" }
-jna = { module = "net.java.dev.jna:jna", version = "5.13.0" }
+logback = { group = "ch.qos.logback", name = "logback-classic", version = "1.5.16" }
+lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.30" }
+jakarta-annotation = { group = "jakarta.annotation", name = "jakarta.annotation-api", version = "2.1.0" }
+jna = { group = "net.java.dev.jna", name = "jna", version = "5.13.0" }
+guava = { group = "com.google.guava", name = "guava", version = "32.1.2-jre" }
+truth = { group = "com.google.truth", name = "truth", version = "1.1.4" }
+mockito = { group = "org.mockito", name = "mockito-core", version = "5.7.0" }
+
 
 [bundles]
-bundled = [ "logback", "lombok", "jakarta-annotation", "jna" ]
+bundled = [ "logback", "jakarta-annotation", "jna", "guava" ]
+tests-bundled = ["truth", "mockito"]
 annotations = [ "jakarta-annotation", "lombok" ]
 
 [plugins]
