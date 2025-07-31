@@ -4,10 +4,13 @@ package org.braid.secret.society.voicevox4j;
 import java.nio.file.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
+import org.braid.secret.society.voicevox4j.api.Synthesizer;
 import org.braid.secret.society.voicevox4j.api.VoiceModelFile;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
 import org.braid.secret.society.voicevox4j.internal.Core;
 import org.braid.secret.society.voicevox4j.internal.NativeVoicevoxLibrary;
+import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxInitializeOptions;
+import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxOnnxruntime;
 
 /**
  * Voicevoxコアライブラリを操作するためのトップエントリポイントクラスです。
@@ -52,5 +55,42 @@ public class Voicevox {
   public OpenJTalkDictionary initOpenJTalkDictionary(Path openJtalkDicDir) throws VoicevoxException {
     log.debug("Initializing OpenJTalk dictionary from: {}", openJtalkDicDir);
     return new OpenJTalkDictionary(openJtalkDicDir, core);
+  }
+
+  /**
+   * 新しい音声合成シンセサイザーを作成します。
+   * この操作ではONNXランタイムが初期化され、指定されたOpenJTalk辞書と組み合わせて合成器が作成されます。
+   *
+   * @param openJtalkDictionary 使用するOpenJTalk辞書
+   * @return 初期化された音声合成器
+   * @throws VoicevoxException 合成器の作成に失敗した場合
+   */
+  public Synthesizer createSynthesizer(OpenJTalkDictionary openJtalkDictionary) throws VoicevoxException {
+    log.debug("Creating synthesizer with OpenJTalk dictionary");
+
+    // ONNXランタイムを取得
+    VoicevoxOnnxruntime onnxruntime = core.voicevox_onnxruntime_get();
+
+    // Synthesizerを作成
+    return new Synthesizer(onnxruntime, openJtalkDictionary, core);
+  }
+
+  /**
+   * 新しい音声合成シンセサイザーを作成します（初期化オプション指定）。
+   * この操作ではONNXランタイムが初期化され、指定されたOpenJTalk辞書と組み合わせて合成器が作成されます。
+   *
+   * @param openJtalkDictionary 使用するOpenJTalk辞書
+   * @param options 初期化オプション
+   * @return 初期化された音声合成器
+   * @throws VoicevoxException 合成器の作成に失敗した場合
+   */
+  public Synthesizer createSynthesizer(OpenJTalkDictionary openJtalkDictionary, VoicevoxInitializeOptions options) throws VoicevoxException {
+    log.debug("Creating synthesizer with OpenJTalk dictionary and custom options");
+
+    // ONNXランタイムを取得
+    VoicevoxOnnxruntime onnxruntime = core.voicevox_onnxruntime_get();
+
+    // Synthesizerを作成
+    return new Synthesizer(onnxruntime, openJtalkDictionary, options, core);
   }
 }

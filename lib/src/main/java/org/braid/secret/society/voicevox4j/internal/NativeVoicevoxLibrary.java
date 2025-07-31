@@ -19,7 +19,7 @@ public class NativeVoicevoxLibrary {
 
   private static final String LIBRARY_NAME = "voicevox_core";
 
-  public static String libraryExtension() {
+  private static String libraryExtension() {
     String osName = System.getProperty("os.name").toLowerCase();
 
     if (osName.contains("win")) {
@@ -53,7 +53,7 @@ public class NativeVoicevoxLibrary {
     return Native.load(libraryPath, Core.class);
   }
 
-  public static String loadLibraryFromDirectory(@Nonnull Path directory) {
+  private static String loadLibraryFromDirectory(@Nonnull Path directory) {
     if(!Files.isDirectory(directory)) {
       log.error("Provided path is not a directory: {}", directory);
       throw new IllegalArgumentException("Provided path is not a directory: " + directory);
@@ -72,7 +72,7 @@ public class NativeVoicevoxLibrary {
     }
   }
 
-  public static String loadLibraryFromResource(String resourcePath) {
+  private static String loadLibraryFromResource(String resourcePath) {
     try (InputStream inputStream = NativeVoicevoxLibrary.class.getResourceAsStream(resourcePath)) {
       if (inputStream == null) {
         throw new RuntimeException("Resource not found: " + resourcePath);

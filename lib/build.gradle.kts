@@ -8,7 +8,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
   mavenCentral()
-  mavenLocal()
 }
 
 dependencies {
@@ -19,11 +18,10 @@ dependencies {
 
   compileOnly(libs.lombok)
   testCompileOnly(libs.lombok)
-//  implementation(files("../deps/lib-0.0.0.jar"))
-//  implementation("jp.hiroshiba.voicevoxcore:voicevoxcore-android:0.16.0")
 
   testImplementation(platform("org.junit:junit-bom:5.10.0"))
   testImplementation("org.junit.jupiter:junit-jupiter")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testImplementation(libs.bundles.tests.bundled)
 
   annotationProcessor(libs.lombok)
