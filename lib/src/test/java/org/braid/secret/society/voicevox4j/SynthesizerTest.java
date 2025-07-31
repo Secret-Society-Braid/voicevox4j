@@ -8,8 +8,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
 import org.braid.secret.society.voicevox4j.api.Synthesizer;
+import org.braid.secret.society.voicevox4j.api.UserDict;
 import org.braid.secret.society.voicevox4j.api.VoiceModelFile;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
+import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxAccelerationMode;
+import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxInitializeOptions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -284,41 +287,47 @@ public class SynthesizerTest {
     System.out.println("=== Synthesizer 特殊ケーステスト開始 ===");
 
     try (OpenJTalkDictionary dictionary = voicevox.initOpenJTalkDictionary(dictPath);
-         VoiceModelFile modelFile = voicevox.useVoiceModelFile(vvmPath);
-         Synthesizer synthesizer = voicevox.createSynthesizer(dictionary)) {
+          UserDict userDict = voicevox.createUserDict();
+          VoiceModelFile modelFile = voicevox.useVoiceModelFile(vvmPath)) {
+      dictionary.useUserDict(userDict);
 
-      synthesizer.loadVoiceModel(modelFile);
+      // VoicevoxInitializeOptionsを作成してCPUモードを指定
+      VoicevoxInitializeOptions options = new VoicevoxInitializeOptions();
+      options.acceleration_mode = VoicevoxAccelerationMode.VOICEVOX_ACCELERATION_MODE_CPU;
+      options.cpu_num_threads = 0; // CPUスレッド数を指定
+      try(Synthesizer synthesizer = voicevox.createSynthesizer(dictionary, options)) {
+        synthesizer.loadVoiceModel(modelFile);
 
-      // 空文字列のテスト
-      System.out.println("\n--- 空文字列テスト ---");
-      String emptyAudioQuery = synthesizer.createAudioQuery("", TEST_STYLE_ID);
-      Truth.assertThat(emptyAudioQuery).isNotNull();
-      System.out.println("✓ 空文字列でのオーディオクエリ作成: " + emptyAudioQuery.length() + " 文字");
+        // 空文字列のテスト
+        System.out.println("\n--- 空文字列テスト ---");
+        String emptyAudioQuery = synthesizer.createAudioQuery("", TEST_STYLE_ID);
+        Truth.assertThat(emptyAudioQuery).isNotNull();
+        System.out.println("✓ 空文字列でのオーディオクエリ作成: " + emptyAudioQuery.length() + " 文字");
 
-      byte[] emptyAudio = synthesizer.tts("", TEST_STYLE_ID);
-      Truth.assertThat(emptyAudio).isNotNull();
-      System.out.println("✓ 空文字列でのTTS: " + emptyAudio.length + " bytes");
+        byte[] emptyAudio = synthesizer.tts("", TEST_STYLE_ID);
+        Truth.assertThat(emptyAudio).isNotNull();
+        System.out.println("✓ 空文字列でのTTS: " + emptyAudio.length + " bytes");
 
-      // 長いテキストのテスト
-      System.out.println("\n--- 長いテキストテスト ---");
-      String longText = "今日はとても良い天気です。散歩に出かけたくなるような青空が広がっています。";
-      byte[] longAudio = synthesizer.tts(longText, TEST_STYLE_ID);
-      Truth.assertThat(longAudio).isNotEmpty();
-      System.out.println("✓ 長いテキストTTS: '" + longText + "' → " + longAudio.length + " bytes");
+        // 長いテキストのテスト
+        System.out.println("\n--- 長いテキストテスト ---");
+        String longText = "今日はとても良い天気です。散歩に出かけたくなるような青空が広がっています。";
+        byte[] longAudio = synthesizer.tts(longText, TEST_STYLE_ID);
+        Truth.assertThat(longAudio).isNotEmpty();
+        System.out.println("✓ 長いテキストTTS: '" + longText + "' → " + longAudio.length + " bytes");
 
-      // 特殊文字を含むテキストのテスト
-      System.out.println("\n--- 特殊文字テスト ---");
-      String[] specialTexts = {"123", "！？", "、。", "あいうえお"};
-      for (String text : specialTexts) {
-        try {
-          byte[] audio = synthesizer.tts(text, TEST_STYLE_ID);
-          Truth.assertThat(audio).isNotNull();
-          System.out.println("✓ 特殊文字TTS: '" + text + "' → " + audio.length + " bytes");
-        } catch (Exception e) {
-          System.out.println("⚠ 特殊文字TTS失敗: '" + text + "' → " + e.getMessage());
+        // 特殊文字を含むテキストのテスト
+        System.out.println("\n--- 特殊文字テスト ---");
+        String[] specialTexts = {"123", "！？", "、。", "あいうえお"};
+        for (String text : specialTexts) {
+          try {
+            byte[] audio = synthesizer.tts(text, TEST_STYLE_ID);
+            Truth.assertThat(audio).isNotNull();
+            System.out.println("✓ 特殊文字TTS: '" + text + "' → " + audio.length + " bytes");
+          } catch (Exception e) {
+            System.out.println("⚠ 特殊文字TTS失敗: '" + text + "' → " + e.getMessage());
+          }
         }
       }
-
     } // ここで自動的にclose()が呼ばれる
     System.out.println("✓ 特殊ケーステスト完了");
   }
