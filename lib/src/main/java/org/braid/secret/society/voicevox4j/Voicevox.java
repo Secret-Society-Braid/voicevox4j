@@ -77,6 +77,16 @@ public class Voicevox {
     return new Synthesizer(onnxRuntime.getNativeOnnxruntime(), openJtalkDictionary, core);
   }
 
+  public Synthesizer createSynthesizer(OpenJTalkDictionary openJTalkDictionary, Path ortPath) throws VoicevoxException {
+    log.debug("Creating synthesizer with OpenJTalk dictionary and ONNX Runtime path: {}", ortPath);
+
+    // ONNXランタイムを取得
+    OnnxRuntime onnxRuntime = new OnnxRuntime(core, ortPath);
+
+    // Synthesizerを作成
+    return new Synthesizer(onnxRuntime.getNativeOnnxruntime(), openJTalkDictionary, core);
+  }
+
   /**
    * 新しい音声合成シンセサイザーを作成します（初期化オプション指定）。
    * この操作ではONNXランタイムが初期化され、指定されたOpenJTalk辞書と組み合わせて合成器が作成されます。

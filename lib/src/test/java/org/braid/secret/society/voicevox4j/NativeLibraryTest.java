@@ -8,7 +8,6 @@ import org.braid.secret.society.voicevox4j.internal.Core;
 import org.braid.secret.society.voicevox4j.internal.NativeVoicevoxLibrary;
 import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxResultCode;
 import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxVoiceModelFile;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class NativeLibraryTest {

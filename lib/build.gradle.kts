@@ -1,6 +1,7 @@
 plugins {
   `java-library`
   alias(libs.plugins.moduleplugin)
+  jacoco
 }
 
 group = "org.braid.society.secret"
@@ -13,7 +14,7 @@ repositories {
 dependencies {
   implementation(libs.logback)
   implementation(libs.jakarta.annotation)
-  implementation(libs.jna)
+  implementation(libs.bundles.jna)
   implementation(libs.guava)
 
   compileOnly(libs.lombok)
@@ -36,15 +37,16 @@ tasks.withType<JavaCompile> {
 
 tasks.test {
   useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
 
-//  // UTF-8エンコーディングを強制
-//  systemProperty("file.encoding", "UTF-8")
-//  systemProperty("jna.encoding", "UTF-8")
-//
-//  // JVMの文字エンコーディング設定
-//  jvmArgs(
-//    "-Dfile.encoding=UTF-8",
-//    "-Djna.encoding=UTF-8",
-//    "-Dsun.jnu.encoding=UTF-8"
-//  )
+  // UTF-8エンコーディングを強制
+  systemProperty("file.encoding", "UTF-8")
+  systemProperty("jna.encoding", "UTF-8")
+
+  // JVMの文字エンコーディング設定
+  jvmArgs(
+    "-Dfile.encoding=UTF-8",
+    "-Djna.encoding=UTF-8",
+    "-Dsun.jnu.encoding=UTF-8"
+  )
 }

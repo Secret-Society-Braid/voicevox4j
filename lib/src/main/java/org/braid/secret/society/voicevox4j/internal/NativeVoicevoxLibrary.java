@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,8 +54,9 @@ public class NativeVoicevoxLibrary {
     }
 
     // UTF-8エンコーディングを強制するJNAオプションを設定
-    java.util.Map<String, Object> options = new java.util.HashMap<>();
-    options.put(Library.OPTION_STRING_ENCODING, "UTF-8");
+    java.util.Map<String, ?> options = Map.of(
+      Library.OPTION_STRING_ENCODING, "UTF-8"
+    );
 
     return Native.load(libraryPath, Core.class, options);
   }
@@ -86,7 +88,7 @@ public class NativeVoicevoxLibrary {
       
       // Create temporary file
       String fileName = resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
-      Path tempFile = Files.createTempFile("voicevox_", "_" + fileName);
+      Path tempFile = Files.createTempFile("",fileName);
       
       // Copy resource to temporary file
       Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);

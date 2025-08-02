@@ -2,6 +2,7 @@ package org.braid.secret.society.voicevox4j.internal.structs;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import java.nio.charset.StandardCharsets;
 
 @Structure.FieldOrder({"filename"})
 public class VoicevoxLoadOnnxruntimeOptions extends Structure {
@@ -9,10 +10,12 @@ public class VoicevoxLoadOnnxruntimeOptions extends Structure {
 
   public VoicevoxLoadOnnxruntimeOptions() {
     super();
+    setStringEncoding(StandardCharsets.UTF_8.name());
   }
 
   public VoicevoxLoadOnnxruntimeOptions(Pointer p) {
     super(p);
+    setStringEncoding(StandardCharsets.UTF_8.name());
     read();
   }
 

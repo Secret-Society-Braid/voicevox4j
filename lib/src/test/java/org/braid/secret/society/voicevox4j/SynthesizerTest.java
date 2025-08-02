@@ -10,8 +10,6 @@ import org.braid.secret.society.voicevox4j.api.Synthesizer;
 import org.braid.secret.society.voicevox4j.api.UserDict;
 import org.braid.secret.society.voicevox4j.api.VoiceModelFile;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
-import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxAccelerationMode;
-import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxInitializeOptions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -63,6 +61,7 @@ public class SynthesizerTest {
   void testSynthesizerBasicOperations() throws VoicevoxException {
     Path dictPath = Paths.get("src/main/resources/voicevox_core/dict/open_jtalk_dic_utf_8-1.11").toAbsolutePath();
     Path vvmPath = Paths.get("src/main/resources/voicevox_core/models/vvms/0.vvm").toAbsolutePath();
+    Path ortPath = Paths.get("D:\\voicevox_onnxruntime.dll").toAbsolutePath();
     Voicevox voicevox = new Voicevox(Path.of("src/main/resources/voicevox_core").toAbsolutePath());
 
     log.debug("=== Synthesizer 基本操作テスト開始 ===");
@@ -78,7 +77,7 @@ public class SynthesizerTest {
       UserDict userDict = voicevox.createUserDict();
       dictionary.useUserDict(userDict);
       log.debug("✓ ユーザ辞書の作成成功");
-      try (Synthesizer synthesizer = voicevox.createSynthesizer(dictionary)) {
+      try (Synthesizer synthesizer = voicevox.createSynthesizer(dictionary, ortPath)) {
         log.debug("✓ Synthesizer作成成功");
         Truth.assertThat(synthesizer.isClosed()).isFalse();
 
