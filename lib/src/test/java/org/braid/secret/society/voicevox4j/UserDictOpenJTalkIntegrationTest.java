@@ -1,6 +1,7 @@
 package org.braid.secret.society.voicevox4j;
 
 import com.google.common.truth.Truth;
+import com.ibm.icu.text.Transliterator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
 import org.braid.secret.society.voicevox4j.api.UserDict;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -329,6 +329,8 @@ public class UserDictOpenJTalkIntegrationTest {
   void testUserDictResourceManagement() throws VoicevoxException {
     Voicevox voicevox = new Voicevox(Path.of(""));
     Path dictPath = Paths.get("src/main/resources/voicevox_core/dict/open_jtalk_dic_utf_8-1.11").toAbsolutePath();
+    final String[] pronounces = {"タンゴイチ", "タンゴニ"};
+    Transliterator halfToFull = Transliterator.getInstance("Halfwidth-Fullwidth");
 
     log.debug("=== UserDict リソース管理テスト開始 ===");
 
@@ -348,8 +350,8 @@ public class UserDictOpenJTalkIntegrationTest {
         log.debug("✓ 辞書作成成功（反復 " + (i + 1) + "）");
 
         // 各ユーザー辞書に異なる単語を追加
-        UUID word1 = userDict1.addWord("単語1_" + i, "タンゴ1", 0);
-        UUID word2 = userDict2.addWord("単語2_" + i, "タンゴ2", 1);
+        UUID word1 = userDict1.addWord("単語1_" + i, pronounces[0], 0);
+        UUID word2 = userDict2.addWord("単語2_" + i, pronounces[1], 1);
 
         Truth.assertThat(word1).isNotNull();
         Truth.assertThat(word2).isNotNull();
@@ -359,15 +361,15 @@ public class UserDictOpenJTalkIntegrationTest {
         String json1 = userDict1.toJson();
         String json2 = userDict2.toJson();
 
-        Truth.assertThat(json1).contains("単語1_" + i);
-        Truth.assertThat(json2).contains("単語2_" + i);
+        Truth.assertThat(json1).contains(halfToFull.transliterate("単語1_" + i));
+        Truth.assertThat(json2).contains(halfToFull.transliterate("単語2_" + i));
         log.debug("✓ JSON出力確認成功");
 
         // 辞書間でのインポートテスト
         userDict1.importFrom(userDict2);
         String mergedJson = userDict1.toJson();
-        Truth.assertThat(mergedJson).contains("単語1_" + i);
-        Truth.assertThat(mergedJson).contains("単語2_" + i);
+        Truth.assertThat(mergedJson).contains(halfToFull.transliterate("単語1_" + i));
+        Truth.assertThat(mergedJson).contains(halfToFull.transliterate("単語2_" + i));
         log.debug("✓ 辞書インポート成功");
 
         // OpenJTalk辞書への設定
@@ -375,7 +377,7 @@ public class UserDictOpenJTalkIntegrationTest {
         log.debug("✓ OpenJTalk辞書設定成功");
 
       } // try-with-resourcesで自動的にリソース解放
-      log.debug("✓ リソース自動解放完了（反復 " + (i + 1) + "）");
+      log.debug("✓ リソース自動解放完了（反復 {}）", i + 1);
     }
 
     log.debug("=== UserDict リソース管理テスト完了 ===");
