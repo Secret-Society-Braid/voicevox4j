@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.braid.society.secret.voicevox4j.exception.VoicevoxException;
 import org.braid.society.secret.voicevox4j.internal.Core;
-import org.braid.secret.society.voicevox4j.internal.structs.*;
 import org.braid.society.secret.voicevox4j.internal.structs.VoicevoxInitializeOptions;
 import org.braid.society.secret.voicevox4j.internal.structs.VoicevoxOnnxruntime;
 import org.braid.society.secret.voicevox4j.internal.structs.VoicevoxResultCode;

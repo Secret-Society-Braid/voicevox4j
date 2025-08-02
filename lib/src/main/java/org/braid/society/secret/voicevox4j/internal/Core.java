@@ -4,7 +4,6 @@ import com.sun.jna.Library;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.braid.secret.society.voicevox4j.internal.structs.*;
 import org.braid.society.secret.voicevox4j.internal.structs.OpenJtalkRc;
 import org.braid.society.secret.voicevox4j.internal.structs.VoicevoxInitializeOptions;
 import org.braid.society.secret.voicevox4j.internal.structs.VoicevoxLoadOnnxruntimeOptions;
