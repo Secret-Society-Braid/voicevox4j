@@ -36,8 +36,8 @@ public class NativeLibraryTest {
     Path vvmPath = Paths.get("src/main/resources/voicevox_core/models/vvms/0.vvm").toAbsolutePath();
 
     log.debug("=== 直接JNA VoiceModelFile テスト開始 ===");
-    log.debug("VVMファイルパス: " + vvmPath);
-    log.debug("ファイル存在確認: " + java.nio.file.Files.exists(vvmPath));
+    log.debug("VVMファイルパス: {}", vvmPath);
+    log.debug("ファイル存在確認: {}", java.nio.file.Files.exists(vvmPath));
 
     // VoicevoxVoiceModelFileを開くための出力参照を準備
     PointerByReference outModel = new PointerByReference();

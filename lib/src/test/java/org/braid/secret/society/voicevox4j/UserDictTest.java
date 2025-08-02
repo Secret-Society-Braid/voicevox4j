@@ -68,13 +68,13 @@ public class UserDictTest {
 
       // 辞書が正常に開かれることを確認
       Truth.assertThat(userDict.isClosed()).isFalse();
-      log.debug("✓ 辞書が開いた状態: " + !userDict.isClosed());
+      log.debug("✓ 辞書が開いた状態: {}", !userDict.isClosed());
 
       // 単語追加のテスト
       log.debug("--- 単語追加テスト ---");
       UUID wordId1 = userDict.addWord("表記", "ヒョウキ", 0);
       Truth.assertThat(wordId1).isNotNull();
-      log.debug("✓ 単語追加成功: 表記 -> " + wordId1);
+      log.debug("✓ 単語追加成功: 表記 -> {}", wordId1);
 
       UUID wordId2 = userDict.addWord("読み方", "ヨミカタ", 1);
       Truth.assertThat(wordId2).isNotNull();

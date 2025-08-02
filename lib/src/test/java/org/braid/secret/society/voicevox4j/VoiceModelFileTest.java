@@ -35,11 +35,12 @@ public class VoiceModelFileTest {
       byte[] modelId = modelFile.getModelId();
       Truth.assertThat(modelId).hasLength(16);
       log.debug("✓ モデルID取得成功 (16バイト)");
-      System.out.print("モデルID: ");
+      StringBuilder modelIdHex = new StringBuilder();
       for (int i = 0; i < modelId.length; i++) {
-        System.out.printf("%02x", modelId[i] & 0xFF);
-        if (i < modelId.length - 1) System.out.print("-");
+        modelIdHex.append(String.format("%02x", modelId[i] & 0xFF));
+        if (i < modelId.length - 1) modelIdHex.append("-");
       }
+      log.debug("モデルID: {}", modelIdHex);
 
       // メタデータJSONの取得（メモリは内部で自動解放される）
       String metasJson = modelFile.getMetasJson();
