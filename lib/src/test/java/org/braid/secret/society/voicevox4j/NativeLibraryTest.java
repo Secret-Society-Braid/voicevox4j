@@ -22,7 +22,11 @@ public class NativeLibraryTest {
 
   @Test
   void testOnnxRuntimeLoad() {
-    Truth.assertThat(core.voicevox_get_onnxruntime_lib_unversioned_filename()).isNotEmpty();
+    String versionedFilename = core.voicevox_get_onnxruntime_lib_versioned_filename();
+    String unversionedFilename = core.voicevox_get_onnxruntime_lib_unversioned_filename();
+    Truth.assertThat(versionedFilename).isNotEmpty();
+    Truth.assertThat(unversionedFilename).isNotEmpty();
+    Truth.assertThat(unversionedFilename).contains(versionedFilename);
   }
 
   @Test

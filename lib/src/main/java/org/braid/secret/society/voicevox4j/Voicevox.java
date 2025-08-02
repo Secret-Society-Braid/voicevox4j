@@ -3,6 +3,7 @@ package org.braid.secret.society.voicevox4j;
 
 import java.nio.file.Path;
 import lombok.extern.slf4j.Slf4j;
+import org.braid.secret.society.voicevox4j.api.OnnxRuntime;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
 import org.braid.secret.society.voicevox4j.api.Synthesizer;
 import org.braid.secret.society.voicevox4j.api.UserDict;
@@ -11,7 +12,6 @@ import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
 import org.braid.secret.society.voicevox4j.internal.Core;
 import org.braid.secret.society.voicevox4j.internal.NativeVoicevoxLibrary;
 import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxInitializeOptions;
-import org.braid.secret.society.voicevox4j.internal.structs.VoicevoxOnnxruntime;
 
 /**
  * Voicevoxコアライブラリを操作するためのトップエントリポイントクラスです。
@@ -70,10 +70,11 @@ public class Voicevox {
     log.debug("Creating synthesizer with OpenJTalk dictionary");
 
     // ONNXランタイムを取得
-    VoicevoxOnnxruntime onnxruntime = core.voicevox_onnxruntime_get();
+    OnnxRuntime onnxRuntime = new OnnxRuntime(core);
+
 
     // Synthesizerを作成
-    return new Synthesizer(onnxruntime, openJtalkDictionary, core);
+    return new Synthesizer(onnxRuntime.getNativeOnnxruntime(), openJtalkDictionary, core);
   }
 
   /**
@@ -89,10 +90,10 @@ public class Voicevox {
     log.debug("Creating synthesizer with OpenJTalk dictionary and custom options");
 
     // ONNXランタイムを取得
-    VoicevoxOnnxruntime onnxruntime = core.voicevox_onnxruntime_get();
+    OnnxRuntime onnxRuntime = new OnnxRuntime(core);
 
     // Synthesizerを作成
-    return new Synthesizer(onnxruntime, openJtalkDictionary, options, core);
+    return new Synthesizer(onnxRuntime.getNativeOnnxruntime(), openJtalkDictionary, options, core);
   }
 
   /**

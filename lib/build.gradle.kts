@@ -26,6 +26,7 @@ dependencies {
 
   annotationProcessor(libs.lombok)
   annotationProcessor(libs.jakarta.annotation)
+  testAnnotationProcessor(libs.lombok)
 }
 
 // force UTF-8 encoding both for source files and for the output
