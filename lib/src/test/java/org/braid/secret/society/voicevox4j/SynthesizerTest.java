@@ -81,7 +81,7 @@ public class SynthesizerTest {
         Truth.assertThat(synthesizer.isClosed()).isFalse();
 
         // 音声モデルの読み込み
-        log.debug("\n--- 音声モデル管理テスト ---");
+        log.debug("--- 音声モデル管理テスト ---");
         byte[] modelId = modelFile.getModelId();
         Truth.assertThat(synthesizer.isLoadedVoiceModel(modelId)).isFalse();
 
