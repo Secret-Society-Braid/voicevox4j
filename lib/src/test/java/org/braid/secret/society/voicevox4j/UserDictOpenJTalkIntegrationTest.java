@@ -1,6 +1,7 @@
 package org.braid.secret.society.voicevox4j;
 
 import com.google.common.truth.Truth;
+import com.ibm.icu.text.Transliterator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.braid.secret.society.voicevox4j.api.OpenJTalkDictionary;
 import org.braid.secret.society.voicevox4j.api.UserDict;
 import org.braid.secret.society.voicevox4j.exception.VoicevoxException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,8 +36,8 @@ public class UserDictOpenJTalkIntegrationTest {
     Path dictPath = Paths.get("src/main/resources/voicevox_core/dict/open_jtalk_dic_utf_8-1.11").toAbsolutePath();
 
     log.debug("=== UserDict + OpenJTalk 統合テスト開始 ===");
-    log.debug("OpenJTalk辞書パス: " + dictPath);
-    log.debug("辞書ディレクトリ存在確認: " + Files.exists(dictPath));
+    log.debug("OpenJTalk辞書パス: {}", dictPath);
+    log.debug("辞書ディレクトリ存在確認: {}", Files.exists(dictPath));
 
     if (!Files.exists(dictPath)) {
       log.debug("⚠️ OpenJTalk辞書が見つかりません。テストをスキップします。");
@@ -66,7 +66,7 @@ public class UserDictOpenJTalkIntegrationTest {
         // カスタム単語「ボイスボックス」を追加
         UUID customWordId = userDict.addWord("ボイスボックス", "ボイスボックス", 0);
         Truth.assertThat(customWordId).isNotNull();
-        log.debug("✓ カスタム単語追加成功: ボイスボックス -> " + customWordId);
+        log.debug("✓ カスタム単語追加成功: ボイスボックス -> {}", customWordId);
 
         // より多くのカスタム単語を追加
         userDict.addWord("音声合成", "オンセイゴウセイ", 0);
@@ -110,7 +110,7 @@ public class UserDictOpenJTalkIntegrationTest {
           String result = openJtalkDict.analyze(text);
           Truth.assertThat(result).isNotNull();
           Truth.assertThat(result).isNotEmpty();
-          log.debug("✓ '" + text + "' 解析成功 (" + result.length() + " 文字)");
+          log.debug("✓ '{}' 解析成功 ({} 文字)", text, result.length());
         }
 
         // 結果の比較（ユーザー辞書あり/なしで異なることを確認）
@@ -121,8 +121,8 @@ public class UserDictOpenJTalkIntegrationTest {
           log.debug("⚠️ ユーザー辞書設定前後で解析結果に変化なし");
         }
 
-        log.debug("ユーザー辞書なし結果長: " + withoutUserDict.length() + " 文字");
-        log.debug("ユーザー辞書あり結果長: " + withUserDict.length() + " 文字");
+        log.debug("ユーザー辞書なし結果長: {} 文字", withoutUserDict.length());
+        log.debug("ユーザー辞書あり結果長: {} 文字", withUserDict.length());
       }
     }
 
@@ -169,7 +169,7 @@ public class UserDictOpenJTalkIntegrationTest {
       Truth.assertThat(result).isNotNull();
       Truth.assertThat(result).isNotEmpty();
       log.debug("✓ 技術文書解析成功");
-      log.debug("解析結果長: " + result.length() + " 文字");
+      log.debug("解析結果長: {} 文字", result.length());
       log.debug("解析結果（先頭400文字）:");
       log.debug(result.length() > 400 ?
         result.substring(0, 400) + "..." : result);
@@ -182,7 +182,7 @@ public class UserDictOpenJTalkIntegrationTest {
         String termResult = openJtalkDict.analyze(term + "について説明します");
         Truth.assertThat(termResult).isNotNull();
         Truth.assertThat(termResult).isNotEmpty();
-        log.debug("✓ '" + term + "' 個別解析成功");
+        log.debug("✓ '{}' 個別解析成功", term);
       }
     }
 
@@ -220,7 +220,7 @@ public class UserDictOpenJTalkIntegrationTest {
       String testText = "テスト単語と削除予定の単語を使います";
       String initialResult = openJtalkDict.analyze(testText);
       Truth.assertThat(initialResult).isNotNull();
-      log.debug("✓ 初期状態解析成功: " + initialResult.length() + " 文字");
+      log.debug("✓ 初期状態解析成功: {} 文字", initialResult.length());
 
       // 単語を更新
       log.debug("--- 単語更新テスト ---");
@@ -231,7 +231,7 @@ public class UserDictOpenJTalkIntegrationTest {
       String updatedTestText = "更新単語と削除予定の単語を使います";
       String updatedResult = openJtalkDict.analyze(updatedTestText);
       Truth.assertThat(updatedResult).isNotNull();
-      log.debug("✓ 更新後解析成功: " + updatedResult.length() + " 文字");
+      log.debug("✓ 更新後解析成功: {} 文字", updatedResult.length());
 
       // 単語を削除
       log.debug("--- 単語削除テスト ---");
@@ -242,7 +242,7 @@ public class UserDictOpenJTalkIntegrationTest {
       String finalTestText = "更新単語を使います";
       String finalResult = openJtalkDict.analyze(finalTestText);
       Truth.assertThat(finalResult).isNotNull();
-      log.debug("✓ 削除後解析成功: " + finalResult.length() + " 文字");
+      log.debug("✓ 削除後解析成功: {} 文字", finalResult.length());
 
       // 最終的なユーザー辞書の状態確認
       String finalDictJson = userDict.toJson();
@@ -275,9 +275,9 @@ public class UserDictOpenJTalkIntegrationTest {
       try {
         String japaneseText = "こんにちは世界";
         String japaneseResult = openJtalkDict.analyze(japaneseText);
-        log.debug("✓ 日本語テキスト解析成功: " + japaneseResult.length() + " 文字");
+        log.debug("✓ 日本語テキスト解析成功: {} 文字", japaneseResult.length());
       } catch (Exception e) {
-        log.debug("⚠️ 日本語テキスト解析エラー: " + e.getMessage());
+        log.debug("⚠️ 日本語テキスト解析エラー: {}", e.getMessage());
       }
 
       // ユーザー辞書を作成して統合テスト
@@ -288,14 +288,14 @@ public class UserDictOpenJTalkIntegrationTest {
         // ユーザー辞書の基本機能を確認
         UUID wordId = userDict.addWord("テスト", "テスト", 0);
         Truth.assertThat(wordId).isNotNull();
-        log.debug("✓ ユーザー辞書に単語追加成功: " + wordId);
+        log.debug("✓ ユーザー辞書に単語追加成功: {}", wordId);
 
         // JSON出力の確認
         String userDictJson = userDict.toJson();
         Truth.assertThat(userDictJson).isNotNull();
         Truth.assertThat(userDictJson).isNotEmpty();
         Truth.assertThat(userDictJson).contains("テスト");
-        log.debug("✓ ユーザー辞書JSON出力成功: " + userDictJson.length() + " 文字");
+        log.debug("✓ ユーザー辞書JSON出力成功: {} 文字", userDictJson.length());
 
         // OpenJTalk辞書にユーザー辞書を設定
         openJtalkDict.useUserDict(userDict.getNativeUserDict());
@@ -329,6 +329,8 @@ public class UserDictOpenJTalkIntegrationTest {
   void testUserDictResourceManagement() throws VoicevoxException {
     Voicevox voicevox = new Voicevox(Path.of(""));
     Path dictPath = Paths.get("src/main/resources/voicevox_core/dict/open_jtalk_dic_utf_8-1.11").toAbsolutePath();
+    final String[] pronounces = {"タンゴイチ", "タンゴニ"};
+    Transliterator halfToFull = Transliterator.getInstance("Halfwidth-Fullwidth");
 
     log.debug("=== UserDict リソース管理テスト開始 ===");
 
@@ -339,17 +341,17 @@ public class UserDictOpenJTalkIntegrationTest {
 
     // 複数のUserDictとOpenJTalkDictionaryの作成と解放
     for (int i = 0; i < 3; i++) {
-      log.debug("--- 反復 " + (i + 1) + " ---");
+      log.debug("--- 反復 {} ---", i + 1);
 
       try (OpenJTalkDictionary openJtalkDict = voicevox.initOpenJTalkDictionary(dictPath);
            UserDict userDict1 = voicevox.createUserDict();
            UserDict userDict2 = voicevox.createUserDict()) {
 
-        log.debug("✓ 辞書作成成功（反復 " + (i + 1) + "）");
+        log.debug("✓ 辞書作成成功（反復 {}）", i + 1);
 
         // 各ユーザー辞書に異なる単語を追加
-        UUID word1 = userDict1.addWord("単語1_" + i, "タンゴ1", 0);
-        UUID word2 = userDict2.addWord("単語2_" + i, "タンゴ2", 1);
+        UUID word1 = userDict1.addWord("単語1_" + i, pronounces[0], 0);
+        UUID word2 = userDict2.addWord("単語2_" + i, pronounces[1], 1);
 
         Truth.assertThat(word1).isNotNull();
         Truth.assertThat(word2).isNotNull();
@@ -359,15 +361,15 @@ public class UserDictOpenJTalkIntegrationTest {
         String json1 = userDict1.toJson();
         String json2 = userDict2.toJson();
 
-        Truth.assertThat(json1).contains("単語1_" + i);
-        Truth.assertThat(json2).contains("単語2_" + i);
+        Truth.assertThat(json1).contains(halfToFull.transliterate("単語1_" + i));
+        Truth.assertThat(json2).contains(halfToFull.transliterate("単語2_" + i));
         log.debug("✓ JSON出力確認成功");
 
         // 辞書間でのインポートテスト
         userDict1.importFrom(userDict2);
         String mergedJson = userDict1.toJson();
-        Truth.assertThat(mergedJson).contains("単語1_" + i);
-        Truth.assertThat(mergedJson).contains("単語2_" + i);
+        Truth.assertThat(mergedJson).contains(halfToFull.transliterate("単語1_" + i));
+        Truth.assertThat(mergedJson).contains(halfToFull.transliterate("単語2_" + i));
         log.debug("✓ 辞書インポート成功");
 
         // OpenJTalk辞書への設定
@@ -375,7 +377,7 @@ public class UserDictOpenJTalkIntegrationTest {
         log.debug("✓ OpenJTalk辞書設定成功");
 
       } // try-with-resourcesで自動的にリソース解放
-      log.debug("✓ リソース自動解放完了（反復 " + (i + 1) + "）");
+      log.debug("✓ リソース自動解放完了（反復 {}）", i + 1);
     }
 
     log.debug("=== UserDict リソース管理テスト完了 ===");

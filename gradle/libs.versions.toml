@@ -10,6 +10,7 @@ jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref 
 guava = { group = "com.google.guava", name = "guava", version = "32.1.2-jre" }
 truth = { group = "com.google.truth", name = "truth", version = "1.1.4" }
 mockito = { group = "org.mockito", name = "mockito-core", version = "5.7.0" }
+icu4j = { group = "com.ibm.icu", name = "icu4j", version = "77.1" }
 
 
 [bundles]

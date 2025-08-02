@@ -71,9 +71,10 @@ public class SynthesizerTest {
 
     // try-with-resources文を使用した自動リソース管理
     try (OpenJTalkDictionary dictionary = voicevox.initOpenJTalkDictionary(dictPath);
-         VoiceModelFile modelFile = voicevox.useVoiceModelFile(vvmPath)) {
+        UserDict userDict = voicevox.createUserDict();
+        VoiceModelFile modelFile = voicevox.useVoiceModelFile(vvmPath)) {
       log.debug("✓ OpenJTalk辞書の初期化成功");
-      UserDict userDict = voicevox.createUserDict();
+
       dictionary.useUserDict(userDict);
       log.debug("✓ ユーザ辞書の作成成功");
       try (Synthesizer synthesizer = voicevox.createSynthesizer(dictionary)) {

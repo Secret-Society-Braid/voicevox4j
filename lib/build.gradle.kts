@@ -30,6 +30,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testImplementation(libs.bundles.tests.bundled)
+  testImplementation(libs.icu4j)
 
   annotationProcessor(libs.lombok)
   annotationProcessor(libs.jakarta.annotation)
