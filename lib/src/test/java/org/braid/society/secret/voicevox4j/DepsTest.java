@@ -20,7 +20,7 @@ public class DepsTest {
 
   @Test
   void testGetCoreVersion() {
-    String version = voicevox.getCoreVersion();
+    String version = voicevox.MetaEndpoint().getCoreVersion();
 
     assertThat(version).isNotNull();
   }
