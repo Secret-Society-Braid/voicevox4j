@@ -33,7 +33,8 @@ public class Voicevox {
 
     try {
       MemorySegment versionPtr = (MemorySegment) getCoreVersionHandle.invokeExact();
-      version = versionPtr.getString(0);
+      version = versionPtr.reinterpret(Long.MAX_VALUE).getString(0);
+      log.debug("voicevox_get_version returned: {}", version);
     } catch (Throwable e) {
       log.error("Failed to invoke voicevox_get_version", e);
     }
