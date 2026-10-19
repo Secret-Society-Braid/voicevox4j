@@ -17,7 +17,7 @@ public class Voicevox {
   private static final Logger log = LoggerFactory.getLogger(Voicevox.class);
 
   public Voicevox(Path path) {
-    System.load(path.toString());
+    System.load(path.toAbsolutePath().toString());
 
     this.linker = Linker.nativeLinker();
     this.lookup = SymbolLookup.loaderLookup();
