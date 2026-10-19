@@ -46,3 +46,4 @@ bin/
 /lib/src/main/resources/voicevox_onnxruntime.dll
 /lib/src/main/resources/voicevox_core/
 /lib/src/main/resources/download.exe
+/native/
