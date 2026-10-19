@@ -44,7 +44,6 @@ public class Meta {
     try {
       MemorySegment versionPtr = (MemorySegment) getCoreVersionHandle.invokeExact();
       version = versionPtr.reinterpret(Long.MAX_VALUE).getString(0);
-      log.debug("voicevox_get_version returned: {}", version);
     } catch (Throwable e) {
       log.error("Error occurred while calling voicevox_get_version", e);
       throw new RuntimeException(e);
@@ -71,8 +70,6 @@ public class Meta {
     try {
       MemorySegment filenamePtr = (MemorySegment) getOnnxRuntimeRecommendedVersionedFilenameHandle.invokeExact();
       filename = filenamePtr.reinterpret(Long.MAX_VALUE).getString(0);
-      log.debug("voicevox_get_onnxruntime_lib_recommended_versioned_filename returned: {}",
-        filename);
     } catch (Throwable e) {
       log.error(
         "Error occurred while calling voicevox_get_onnxruntime_lib_recommended_versioned_filename",
@@ -81,5 +78,80 @@ public class Meta {
     }
 
     return filename;
+  }
+
+  /**
+   * Get the version of the ONNX Runtime unversioned filename that is recommended to be used with the library.
+   * <p>
+   * Original C function signature: <code>const char * voicevox_get_onnxruntime_lib_recommended_unversioned_filename (void)</code>
+   * @return The version string of the ONNX Runtime unversioned filename read from the native library.
+   */
+  public String getOnnxRuntimeRecommendedUnversionedFilename() {
+    MethodHandle getOnnxRuntimeRecommendedUnversionedFilenameHandle = this.linker.downcallHandle(
+      this.lookup.find("voicevox_get_onnxruntime_lib_recommended_unversioned_filename")
+        .orElseThrow(() -> new RuntimeException("Failed to find symbol")),
+      FunctionDescriptor.of(ValueLayout.ADDRESS)
+    );
+
+    String filename;
+
+    try {
+      MemorySegment filenamePtr = (MemorySegment) getOnnxRuntimeRecommendedUnversionedFilenameHandle.invokeExact();
+      filename = filenamePtr.reinterpret(Long.MAX_VALUE).getString(0);
+    } catch (Throwable e) {
+      log.error(
+        "Error occurred while calling voicevox_get_onnxruntime_lib_recommended_unversioned_filename",
+        e);
+      throw new RuntimeException(e);
+    }
+    return filename;
+  }
+
+  /**
+   * Get the minimum minor version of the ONNX Runtime library that is required to be used with the library.
+   * The version string will be like "1.15.0", and the returned minor version is 15.
+   * @return The minimum minor version of the ONNX Runtime library.
+   */
+  public int getOnnxRuntimeLibMinRequiredMinorVersion() {
+    MethodHandle getOnnxRuntimeLibMinRequiredMinorVersionHandle = this.linker.downcallHandle(
+      this.lookup.find("voicevox_get_onnxruntime_lib_min_required_minor_version")
+        .orElseThrow(() -> new RuntimeException("Failed to find symbol")),
+      FunctionDescriptor.of(ValueLayout.JAVA_INT)
+    );
+
+    int version;
+
+    try {
+      version = (int) getOnnxRuntimeLibMinRequiredMinorVersionHandle.invokeExact();
+    } catch (Throwable e) {
+      log.error(
+        "Error occurred while calling voicevox_get_onnxruntime_lib_min_required_minor_version", e);
+      throw new RuntimeException(e);
+    }
+    return version;
+  }
+
+  /**
+   * Get the maximum minor version of the ONNX Runtime library that is supported to be used with the library.
+   * The version string will be like "1.16.0", and the returned minor version is 16.
+   * @return The maximum minor version of the ONNX Runtime library.
+   */
+  public int getOnnxRuntimeLibMaxSupportedMinorVersion() {
+    MethodHandle getOnnxRuntimeLibMaxSupportedMinorVersionHandle = this.linker.downcallHandle(
+      this.lookup.find("voicevox_get_onnxruntime_lib_max_supported_minor_version")
+        .orElseThrow(() -> new RuntimeException("Failed to find symbol")),
+      FunctionDescriptor.of(ValueLayout.JAVA_INT)
+    );
+
+    int version;
+
+    try {
+      version = (int) getOnnxRuntimeLibMaxSupportedMinorVersionHandle.invokeExact();
+    } catch (Throwable e) {
+      log.error(
+        "Error occurred while calling voicevox_get_onnxruntime_lib_max_supported_minor_version", e);
+      throw new RuntimeException(e);
+    }
+    return version;
   }
 }
