@@ -7,13 +7,14 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.nio.file.Path;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 public class Voicevox {
 
   private final Linker linker;
   private final SymbolLookup lookup;
+  private static final Logger log = LoggerFactory.getLogger(Voicevox.class);
 
   public Voicevox(Path path) {
     System.load(path.toString());
