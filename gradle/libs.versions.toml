@@ -2,7 +2,7 @@
 jna = "5.17.0"
 
 [libraries]
-logback = { group = "ch.qos.logback", name = "logback-classic", version = "1.5.16" }
+logback = { group = "ch.qos.logback", name = "logback-classic", version = "1.6.3" }
 lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.30" }
 jakarta-annotation = { group = "jakarta.annotation", name = "jakarta.annotation-api", version = "2.1.0" }
 jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
