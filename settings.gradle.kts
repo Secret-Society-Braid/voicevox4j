@@ -5,7 +5,7 @@ pluginManagement {
 }
 plugins {
   id("org.gradle.toolchains.foojay-resolver").version("1.0.0")
-  id("com.gradle.develocity").version("3.19")
+  id("com.gradle.develocity").version("4.0")
 }
 develocity {
   buildScan {
