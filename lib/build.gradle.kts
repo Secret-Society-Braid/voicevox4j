@@ -1,6 +1,5 @@
 plugins {
   `java-library`
-  alias(libs.plugins.moduleplugin)
   jacoco
 }
 
@@ -23,18 +22,13 @@ dependencies {
   implementation(libs.bundles.jna)
   implementation(libs.guava)
 
-  compileOnly(libs.lombok)
-  testCompileOnly(libs.lombok)
-
   testImplementation(platform("org.junit:junit-bom:5.10.0"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testImplementation(libs.bundles.tests.bundled)
   testImplementation(libs.icu4j)
 
-  annotationProcessor(libs.lombok)
   annotationProcessor(libs.jakarta.annotation)
-  testAnnotationProcessor(libs.lombok)
 }
 
 // force UTF-8 encoding both for source files and for the output

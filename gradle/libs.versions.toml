@@ -3,7 +3,6 @@ jna = "5.17.0"
 
 [libraries]
 logback = { group = "ch.qos.logback", name = "logback-classic", version = "1.6.3" }
-lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.30" }
 jakarta-annotation = { group = "jakarta.annotation", name = "jakarta.annotation-api", version = "2.1.0" }
 jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
 jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
@@ -16,8 +15,5 @@ icu4j = { group = "com.ibm.icu", name = "icu4j", version = "77.1" }
 [bundles]
 bundled = [ "logback", "jakarta-annotation", "jna", "guava" ]
 tests-bundled = ["truth", "mockito"]
-annotations = [ "jakarta-annotation", "lombok" ]
+annotations = [ "jakarta-annotation" ]
 jna = [ "jna", "jna-platform" ]
-
-[plugins]
-moduleplugin = { id = "org.javamodularity.moduleplugin", version = "1.8.15" }
